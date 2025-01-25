@@ -1,6 +1,6 @@
 class TweetsController < ApplicationController
  def create
-   token = cookies.permanent.signed[:twitter_session_token]
+   token = cookies.signed[:twitter_session_token]
    session = Session.find_by(token: token)
    if session
      user = session.user
@@ -10,19 +10,14 @@ class TweetsController < ApplicationController
      end
    end
  end
- private
- def tweet_params
-    params.require(:tweet).permit(:message)
- end
 
  def destroy
-   token = cookies.permanent.signed[:twitter_session_token]
+   token = cookies.signed[:twitter_session_token]
    session = Session.find_by(token: token)
    if session
      user = session.user
      @tweet = Tweet.find_by(id: params[:id])
-     if tweet && tweet.user_id == user.id
-       tweet.destroy
+     if tweet && (tweet.user == user) && tweet.destroy
        render json: { success: true }
      else
        render json: { success: false }
@@ -31,17 +26,20 @@ class TweetsController < ApplicationController
   end
 
   def index
-    @tweets = Tweet.includes(:user).order(created_at: :desc)
+    @tweets = Tweet.all.includes(:user).order(created_at: :desc)
     render 'tweets/index' 
   end
 
   def index_by_user
-    @user = User.find_by(username: params[:username])
-    if @user
-      @tweets = @user.tweets.order(created_at: :desc)
-      render 'tweets/index_by_user'
-    else
-      render json: { success: false  }
+    user = User.find_by(username: params[:username])
+    if user
+      @tweets = user.tweets
+      render 'tweets/index'
     end
+  end
+
+  private
+  def tweet_params
+    params.require(:tweet).permit(:message)
   end
 end

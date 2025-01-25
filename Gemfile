@@ -55,7 +55,6 @@ group :development, :test do
   gem 'rspec-rails', '~> 5.1'
   gem 'rubocop', '~> 1.36'
   gem 'rubocop-rspec', '2.12'
-  gem 'activestorage'
 end
 
 group :development do
