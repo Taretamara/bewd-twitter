@@ -278,6 +278,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  activestorage
   awesome_print (~> 1.9)
   aws-sdk-s3 (~> 1.114)
   bcrypt (~> 3.1)
